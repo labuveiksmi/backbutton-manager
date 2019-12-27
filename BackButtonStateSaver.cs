@@ -2,16 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BackButtonStateSaver : MonoBehaviour
+public abstract class BackButtonStateSaver : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void OnEnable()
+    private bool dontBacked = true;
+
+    public void OnEnable()
     {
-        BackButtonManager.instance.AddState(this);
+        if (BackButtonManager.instance)
+        {
+            BackButtonManager.instance.AddState(this);
+        }
     }
 
-    public void Close()
+    public virtual void Back()
     {
-        BackButtonManager.instance.Close();
+        dontBacked = false;
+    }
+
+    private void OnDisable()
+    {
+        if (dontBacked)
+        {
+            Back();
+        }
     }
 }

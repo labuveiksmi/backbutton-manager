@@ -7,17 +7,10 @@ public class BackButtonManager : MonoBehaviour
 {
     public static BackButtonManager instance;
     private bool stopManaging = false;
-    Stack<BackButtonStateSaver> stateSavers = new Stack<BackButtonStateSaver>();
-    HR_MainMenuHandler menuHandler;
-    private HR_MainMenuHandler GetHandler()
-    {
-        if (!menuHandler)
-        {
-            menuHandler = FindObjectOfType<HR_MainMenuHandler>();
-        }
-        return menuHandler;
-    }
+    private Stack<BackButtonStateSaver> stateSavers = new Stack<BackButtonStateSaver>();
+
     #region properties
+
     public bool StopManaging
     {
         get
@@ -29,8 +22,9 @@ public class BackButtonManager : MonoBehaviour
         {
             stopManaging = value;
         }
-    } 
-    #endregion
+    }
+
+    #endregion properties
 
     #region singleton
 
@@ -45,37 +39,35 @@ public class BackButtonManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-    } 
-    #endregion
+    }
 
-    public void AddState(BackButtonStateSaver saver)
+    #endregion singleton
+
+    public void AddState(BackButtonStateSaver back)
     {
-        stateSavers.Push(saver);
+        stateSavers.Push(back);
     }
 
     public void Close()
     {
-        GetClosableCount();
-        if (stateSavers.Count == 0)
+        if (GetClosableCount() == 0
+            /*&& !stateSavers.Peek()*/)
         {
             PauseOrQuit();
         }
         else
         {
-            stateSavers.Pop().gameObject.SetActive(false);
+            stateSavers.Pop().Back();
         }
     }
 
     private void PauseOrQuit()
     {
-        if (SceneManager.GetActiveScene().name == "MainMenu")
+        Menu menu = FindObjectOfType<Menu>();
+        if (menu)
         {
-            GetHandler().QuitGame();
+            menu.OpenExitPopup();
         }
-        else
-        {
-            HR_GamePlayHandler.Instance.Paused();
-        } 
     }
 
     public int GetClosableCount()
@@ -83,16 +75,21 @@ public class BackButtonManager : MonoBehaviour
         int count = stateSavers.Count;
         if (count > 0 && !stateSavers.Peek())
         {
-            for(int i = 0; i < count; i++)
-            {
-                stateSavers.Pop();
-            }
+            EmptyStack();
             count = 0;
         }
         return count;
     }
 
-    void Update()
+    public void EmptyStack()
+    {
+        for (int i = 0; i < stateSavers.Count; i++)
+        {
+            stateSavers.Pop();
+        }
+    }
+
+    private void Update()
     {
         if (Input.GetKeyUp(KeyCode.Escape))
         {
