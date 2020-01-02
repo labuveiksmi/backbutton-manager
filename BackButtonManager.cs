@@ -1,30 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class BackButtonManager : MonoBehaviour
 {
     public static BackButtonManager instance;
-    private bool stopManaging = false;
     private Stack<BackButtonStateSaver> stateSavers = new Stack<BackButtonStateSaver>();
-
-    #region properties
-
-    public bool StopManaging
-    {
-        get
-        {
-            return stopManaging;
-        }
-
-        set
-        {
-            stopManaging = value;
-        }
-    }
-
-    #endregion properties
 
     #region singleton
 
@@ -48,10 +28,9 @@ public class BackButtonManager : MonoBehaviour
         stateSavers.Push(back);
     }
 
-    public void Close()
+    public void CloseLastMenu()
     {
-        if (GetClosableCount() == 0
-            /*&& !stateSavers.Peek()*/)
+        if (GetClosableCount() == 0)
         {
             PauseOrQuit();
         }
@@ -73,6 +52,7 @@ public class BackButtonManager : MonoBehaviour
     public int GetClosableCount()
     {
         int count = stateSavers.Count;
+        // Check for empty links.
         if (count > 0 && !stateSavers.Peek())
         {
             EmptyStack();
@@ -93,7 +73,7 @@ public class BackButtonManager : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Escape))
         {
-            Close();
+            CloseLastMenu();
         }
     }
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public abstract class BackButtonStateSaver : MonoBehaviour
 {
-    private bool dontBacked = true;
+    //private bool didBack = false;
 
-    public void OnEnable()
+    protected void OnEnable()
     {
         if (BackButtonManager.instance)
         {
@@ -16,14 +16,15 @@ public abstract class BackButtonStateSaver : MonoBehaviour
 
     public virtual void Back()
     {
-        dontBacked = false;
+        //didBack = true;
+        BackButtonManager.instance.CloseLastMenu();
     }
 
-    private void OnDisable()
-    {
-        if (dontBacked)
-        {
-            Back();
-        }
-    }
+    //protected void OnDisable() // лишнее??
+    //{
+    //    if (!didBack)
+    //    {
+    //        Back();
+    //    }
+    //}
 }
