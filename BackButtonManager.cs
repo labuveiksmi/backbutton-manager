@@ -4,7 +4,7 @@ using UnityEngine;
 public class BackButtonManager : MonoBehaviour
 {
     public static BackButtonManager instance;
-    private Stack<BackButtonStateSaver> stateSavers = new Stack<BackButtonStateSaver>();
+    private Stack<ClosablePopup> popups = new Stack<ClosablePopup>();
 
     #region singleton
 
@@ -23,9 +23,9 @@ public class BackButtonManager : MonoBehaviour
 
     #endregion singleton
 
-    public void AddState(BackButtonStateSaver back)
+    public void AddState(ClosablePopup popup)
     {
-        stateSavers.Push(back);
+        popups.Push(popup);
     }
 
     public void CloseLastMenu()
@@ -36,7 +36,7 @@ public class BackButtonManager : MonoBehaviour
         }
         else
         {
-            stateSavers.Pop().Back();
+            popups.Pop().Back();
         }
     }
 
@@ -51,21 +51,22 @@ public class BackButtonManager : MonoBehaviour
 
     public int GetClosableCount()
     {
-        int count = stateSavers.Count;
+        int count = popups.Count;
         // Check for empty links.
-        if (count > 0 && !stateSavers.Peek())
+        if (count > 0 && !popups.Peek())
         {
             EmptyStack();
             count = 0;
         }
+        Debug.Log("popups count =" + count);
         return count;
     }
 
     public void EmptyStack()
     {
-        for (int i = 0; i < stateSavers.Count; i++)
+        for (int i = 0; i < popups.Count; i++)
         {
-            stateSavers.Pop();
+            popups.Pop();
         }
     }
 

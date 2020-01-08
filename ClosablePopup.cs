@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BackButtonStateSaver : MonoBehaviour
+public abstract class ClosablePopup : MonoBehaviour
 {
-    //private bool didBack = false;
+    private bool didBack = false;
 
     protected void OnEnable()
     {
@@ -16,15 +16,15 @@ public abstract class BackButtonStateSaver : MonoBehaviour
 
     public virtual void Back()
     {
-        //didBack = true;
+        didBack = true;
         BackButtonManager.instance.CloseLastMenu();
     }
 
-    //protected void OnDisable() // лишнее??
-    //{
-    //    if (!didBack)
-    //    {
-    //        Back();
-    //    }
-    //}
+    protected void OnDisable()
+    {
+        if (!didBack)
+        {
+            Back();
+        }
+    }
 }
